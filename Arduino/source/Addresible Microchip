@@ -1,0 +1,45 @@
+//clock and data are pins 1 and 2 by default but you can change them if you wish
+int ID=2,clock=1,data=2;
+//recieves 16 Bit words - 8 bits ID and 8 data
+int recieve(){
+  pinMode(data,INPUT);
+  pinMode(clock,INPUT); 
+  int recieved=0;
+  for(int i=0;i<16;i++){
+    while(!digitalRead(clock)); 
+    recieved|= (digitalRead(data)<<i); 
+    while(digitalRead(clock));
+  } return recieved;
+}
+//sends a 16-bit message determined by n for approx. 5 milliseconds
+void send(int n){
+  pinMode(data,OUTPUT); 
+  pinMode(clock,OUTPUT);
+  for(int i=0;i<16;i++){
+    digitalWrite(data,n&1);n>>=1;
+    digitalWrite(clock,HIGH);delayMicroseconds(150);
+    digitalWrite(clock,LOW);delayMicroseconds(150); 
+  }
+}
+//write your device's responce logic in this function:
+int responce(int data){//in the default loop provided here data is the recieved 8-bit word from the sender
+    //example:
+    /*
+    int a=digitalRead(5)*8;
+    int b=digitalRead(3)*4; 
+    int c=digitalRead(4)*2; 
+    int d=digitalRead(0)*1;
+    return a+b+c+d;
+    */
+}
+void setup(){
+  for(int i=0;i<6;i++)
+    pinMode(i,INPUT);
+}
+//recieves a message and if it is addressed to this microchip, sends a responce
+void loop(){
+  int recieved=recieved();
+  if((recieved>>8)==ID){
+    send(recieved&0b11111111);
+  }
+}
