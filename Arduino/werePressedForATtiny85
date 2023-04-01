@@ -1,0 +1,2 @@
+byte PREVB=0;
+#define werePressed() ((~PREVB)&(PREVB=PINB))
