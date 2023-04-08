@@ -1,0 +1,15 @@
+int recieve(){DDRB&=~3;PORTB=0;int result=0;
+  for(int i=0;i<16;i++){
+    while(PINB&2);
+    result|=(PINB&1)<<i;
+    while(!(PINB&2));
+  }
+  return result;
+}
+void send(int n){DDRB|=3;
+  for(int i=0;i<16;i++){
+    PORTB=n&1;
+    PORTB=2;
+    n>>=1;
+  }
+}
